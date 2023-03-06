@@ -1,0 +1,174 @@
+#include <iostream>
+
+using namespace std;
+
+
+class TaxiTime{
+	char** names;
+	int* minutes;
+	int size;
+	int lenght;
+public:
+	TaxiTime(int a);
+	
+	bool isExist(char* c);
+	
+	void add(char* c);
+
+	void update(int d, char* c);
+	
+	void show();
+};
+
+TaxiTime::TimeData(int a) {
+	size = a;
+	names = new char* [size];
+	minutes = new int[size];
+	for (int i = 0; i < size; i++) {
+		names[i] = new char[25];
+	}
+}
+
+bool TaxiTime::isExist(char* c) {
+	for (int i = 0; i <= lenght; i++) {
+		if (strcmp(names[i], c) == 0)
+			return 1;
+	}
+	return 0;
+}
+
+void TaxiTime::add(char* c) {
+	if (lenght < size && !isExist(c)) {
+		strcpy_s(names[lenght], strlen(c) + 1, c);
+		minutes[lenght] = 0;
+		cout << names[lenght] << endl;
+		lenght++;
+	}
+}
+
+void TaxiTime::update(int d, char* c) {
+	for (int i = 0; i < lenght; i++) {
+		if (strcmp(names[i], c) == 0)
+			minutes[i] += d;
+	}
+}
+
+void TaxiTime::show() {
+	for (int i = 0; i < lenght; i++) {
+		cout << "Name: " << names[i] << endl;
+		cout << "Time spend: " << minutes[i] << endl << endl;
+	}
+}
+
+
+
+#include <iostream>
+
+using namespace std;
+
+class QueuePriority {
+	char** Wait; 
+	int* Priority;
+	int MaxQueueLenght; 
+	int QueueLenght; 
+	int* Minutes; 
+public:
+    QueuePriority(int m);  
+    void add(char* c, int p); 
+	char* extract(); 
+	void clear(); 
+	bool isEmpty(); 
+	bool isFull(); 
+	bool isExist(char* c);
+	void show(); 
+	void updateTime(int m);
+	int getMinutesMaxPriority();
+};
+
+
+int QueuePriority::getMinutesMaxPriority() {
+	if (!isEmpty()) {
+		int bufMinutes = Minutes[QueueLenght - 1];
+		Minutes[QueueLenght - 1] = 0;
+		return bufMinutes;
+	}
+}
+
+void QueuePriority::updateTime(int m) {
+	for (int i = 0; i < QueueLenght; i++) {
+		Minutes[i] += m;
+	}
+}
+
+bool QueuePriority::isExist(char* c) {
+	for (int i = 0; i < QueueLenght; i++) {
+		if (strcmp(Wait[i],c) == 0)
+			return 1;
+	}
+	return 0;
+}
+
+void QueuePriority::show() {
+	for (int i = 0; i < QueueLenght; i++) {
+		cout << Wait[i] << " - " << Priority[i] << endl;
+	}
+	cout << endl;
+}
+
+QueuePriority::QueuePriority(int m) {
+	MaxQueueLenght = m;
+	Wait = new char*[MaxQueueLenght];
+	Priority = new int[MaxQueueLenght];
+	Minutes = new int[MaxQueueLenght];
+	for (int i = 0; i < MaxQueueLenght; i++) {
+		Wait[i] = new char[25];
+		Minutes[i] = 0;
+	}
+}
+
+bool QueuePriority::isEmpty() {
+	return QueueLenght == 0;
+}
+
+bool QueuePriority::isFull() {
+	return QueueLenght == MaxQueueLenght;
+}
+
+void QueuePriority::add(char *c, int p) {
+	if (!isFull()) {
+		strcpy_s(Wait[QueueLenght], 26, c);
+		Priority[QueueLenght] = p;
+		QueueLenght++;
+	}
+}
+
+char* QueuePriority::extract() {
+	if (!isEmpty()) {
+		int max_priority = Priority[0];
+		int pos_max_priority = 0;
+		for (int i = 1; i < QueueLenght; i++) {
+			if (Priority[i] < max_priority) {
+				max_priority = Priority[i];
+				pos_max_priority = i;
+			}
+		}
+
+		for (int i = pos_max_priority; i < QueueLenght - 1; i++) {
+			Wait[i] = Wait[i + 1];
+			Priority[i] = Priority[i + 1];
+			Minutes[i] = Minutes[i + 1];
+		}
+
+		char* bufWait = new char[strlen(Wait[QueueLenght - 1] + 1)];
+		strcpy_s(bufWait, strlen(Wait[QueueLenght - 1]) + 1, Wait[QueueLenght - 1]);
+		QueueLenght--;
+		return bufWait;
+	}
+}
+
+void QueuePriority::clear() {
+	QueueLenght = 0;
+	delete[] Minutes;
+	delete[] Priority;
+	delete[] Wait;
+}
